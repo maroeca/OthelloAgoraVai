@@ -33,8 +33,11 @@ public class GreedyPlayer extends AbstractPlayer {
 
         for (Move m: possibleMoves) {
 
-            heuristic = parityHeuristic(m, tab, game) + mobilityHeuristic(m, tab, game)
-                    + cornerHeuristic(m, tab, game) + stabilityHeuristic(m, tab, game); // + outras heuristica
+            heuristic += parityHeuristic(m, tab, game);
+            heuristic += mobilityHeuristic(m, tab, game);
+            heuristic += cornerHeuristic(m, tab, game);
+            heuristic += stabilityHeuristic(m, tab, game); // + outras heuristica
+
             System.out.println("PARITY: " + parityHeuristic(m, tab, game) + " || MOBILITY: " + mobilityHeuristic(m, tab, game) +
                     " || CORNER: " + cornerHeuristic(m, tab, game) +
                     " || STABILITY" + stabilityHeuristic(m, tab, game) + " || total: " + heuristic);

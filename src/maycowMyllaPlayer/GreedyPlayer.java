@@ -21,6 +21,7 @@ public class GreedyPlayer extends AbstractPlayer {
      *   Fonte: https://kartikkukreja.wordpress.com/2013/03/30/heuristic-function-for-reversiothello/
      *   1. Paridade da quantidade de peças dos players.
      *   2. Diferença relativa dos movimentos possiveis de cada player. Assim o player tenta reduzir a mobilidade do inimigo
+     *   3. Quantidade de bordas capturadas
      **/
 
 
@@ -31,8 +32,10 @@ public class GreedyPlayer extends AbstractPlayer {
 
         for (Move m: possibleMoves) {
 
-            heuristic = parityHeuristic(m, tab, game) + mobilityHeuristic(m, tab, game); // + outras heuristica
-            System.out.println("PARITY: " + parityHeuristic(m, tab, game) + " || MOBILITY: " + mobilityHeuristic(m, tab, game) + " || total: " + heuristic);
+            heuristic = parityHeuristic(m, tab, game) + mobilityHeuristic(m, tab, game) + cornerHeuristic(m, tab, game); // + outras heuristica
+            System.out.println("PARITY: " + parityHeuristic(m, tab, game) + " || MOBILITY: " + mobilityHeuristic(m, tab, game) +
+                    " || CORNER: " + cornerHeuristic(m, tab, game) + " || total: " + heuristic);
+
             if (bestHeuristic < heuristic) {
                 bestHeuristic = heuristic;
                 bestMove = m;
@@ -62,11 +65,38 @@ public class GreedyPlayer extends AbstractPlayer {
         int myMoves = game.getValidMoves(board, getMyBoardMark()).size();
         int enemyMoves = game.getValidMoves(board, getOpponentBoardMark()).size();
 
-        if(myMoves + enemyMoves != 0) {
+        if (myMoves + enemyMoves != 0)
             return (double) 100 * (myMoves - enemyMoves) / (myMoves * enemyMoves);
-        } else {
+        else
             return 0.0;
+    }
+
+    private double cornerHeuristic(Move move, int[][] tab, OthelloGame game) {
+        int [][] board = simulateMove(tab, move.getBardPlace(), getMyBoardMark());
+        int myCorners = countCorners(board, getMyBoardMark());
+        int enemyCorners = countCorners(board, getOpponentBoardMark());
+
+        if(myCorners + enemyCorners != 0)
+          return (double) 100 * (myCorners - enemyCorners) / (myCorners + enemyCorners);
+        else
+            return 0.0;
+    }
+
+    private int countCorners(int [][] tab, int player) {
+        int countPlayer = 0;
+        try {
+            for (int i = 0; i < tab.length; i += (tab.length - 1)) {
+                for(int j = 0; j < tab[i].length; j += (tab[i].length - 1)) {
+                    if (tab[i][j] == player)
+                        countPlayer++;
+                }
+            }
+        } catch (Exception e) {
+            if (player != 1 && player != -1)
+                System.err.println(e + " Invalid player");
         }
+
+        return countPlayer;
     }
 
     private double countPlayerMarks(int [][] tab, int player) {

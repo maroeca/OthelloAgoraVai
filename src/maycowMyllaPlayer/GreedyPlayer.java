@@ -20,22 +20,21 @@ public class GreedyPlayer extends AbstractPlayer {
      *   HEUTISTICAS:
      *   Fonte: https://kartikkukreja.wordpress.com/2013/03/30/heuristic-function-for-reversiothello/
      *   1. Paridade da quantidade de peças dos players.
-     *   2. Verifica se a peça sera posicionada nas paredes ou nos cantos
+     *   2. Diferença relativa dos movimentos possiveis de cada player. Assim o player tenta reduzir a mobilidade do inimigo
      **/
 
 
     private Move greedySearch(List<Move> possibleMoves, int [][] tab, OthelloGame game) {
-        double parityHeuristic = 0.0;
+        double heuristic = 0.0;
         double bestHeuristic = Double.NEGATIVE_INFINITY;
         Move bestMove = possibleMoves.get(0);
 
         for (Move m: possibleMoves) {
 
-            parityHeuristic = parityHeuristic(m, tab, game);
-
-            double aux = parityHeuristic; // + outras heuristica
-            if (bestHeuristic < aux) {
-                bestHeuristic = aux;
+            heuristic = parityHeuristic(m, tab, game) + mobilityHeuristic(m, tab, game); // + outras heuristica
+            System.out.println("PARITY: " + parityHeuristic(m, tab, game) + " || MOBILITY: " + mobilityHeuristic(m, tab, game) + " || total: " + heuristic);
+            if (bestHeuristic < heuristic) {
+                bestHeuristic = heuristic;
                 bestMove = m;
 
             }
@@ -45,21 +44,30 @@ public class GreedyPlayer extends AbstractPlayer {
     }
 
     private double parityHeuristic(Move move, int [][] tab, OthelloGame game) {
-        System.out.println(tab);
+        //System.out.println(tab);
         int [][] board = simulateMove(tab, move.getBardPlace(), getMyBoardMark());
-        System.out.println(board);
+        //System.out.println(board);
 
         double myPlayer = countPlayerMarks(board, getMyBoardMark());
         double opPlayer = countPlayerMarks(board, getOpponentBoardMark());
 
-        System.out.println("MY PLAYER: " + myPlayer + "- OP PLAYER: " + opPlayer);
-        System.out.println("PARIDADE " + 100 * ((myPlayer - opPlayer) / (myPlayer + opPlayer)));
+        //System.out.println("MY PLAYER: " + myPlayer + "- OP PLAYER: " + opPlayer);
+        //System.out.println("PARIDADE " + 100 * ((myPlayer - opPlayer) / (myPlayer + opPlayer)));
         return (double) 100 * ((myPlayer - opPlayer) / (myPlayer + opPlayer));
     }
 
-//    private double wallHeuristic(Move move) {
-//        move.getBardPlace()
-//    }
+    private double mobilityHeuristic(Move move, int [][] tab, OthelloGame game) {
+        int [][] board = simulateMove(tab, move.getBardPlace(), getMyBoardMark());
+
+        int myMoves = game.getValidMoves(board, getMyBoardMark()).size();
+        int enemyMoves = game.getValidMoves(board, getOpponentBoardMark()).size();
+
+        if(myMoves + enemyMoves != 0) {
+            return (double) 100 * (myMoves - enemyMoves) / (myMoves * enemyMoves);
+        } else {
+            return 0.0;
+        }
+    }
 
     private double countPlayerMarks(int [][] tab, int player) {
         int countPlayer = 0;

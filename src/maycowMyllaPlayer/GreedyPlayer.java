@@ -22,6 +22,7 @@ public class GreedyPlayer extends AbstractPlayer {
      *   1. Paridade da quantidade de peças dos players.
      *   2. Diferença relativa dos movimentos possiveis de cada player. Assim o player tenta reduzir a mobilidade do inimigo
      *   3. Quantidade de bordas capturadas
+     *   4. Estabilidade das pecas de cada player
      **/
 
 
@@ -32,9 +33,11 @@ public class GreedyPlayer extends AbstractPlayer {
 
         for (Move m: possibleMoves) {
 
-            heuristic = parityHeuristic(m, tab, game) + mobilityHeuristic(m, tab, game) + cornerHeuristic(m, tab, game); // + outras heuristica
+            heuristic = parityHeuristic(m, tab, game) + mobilityHeuristic(m, tab, game)
+                    + cornerHeuristic(m, tab, game) + stabilityHeuristic(m, tab, game); // + outras heuristica
             System.out.println("PARITY: " + parityHeuristic(m, tab, game) + " || MOBILITY: " + mobilityHeuristic(m, tab, game) +
-                    " || CORNER: " + cornerHeuristic(m, tab, game) + " || total: " + heuristic);
+                    " || CORNER: " + cornerHeuristic(m, tab, game) +
+                    " || STABILITY" + stabilityHeuristic(m, tab, game) + " || total: " + heuristic);
 
             if (bestHeuristic < heuristic) {
                 bestHeuristic = heuristic;
@@ -42,7 +45,7 @@ public class GreedyPlayer extends AbstractPlayer {
 
             }
         }
-
+        System.out.println();
         return bestMove;
     }
 
@@ -80,6 +83,76 @@ public class GreedyPlayer extends AbstractPlayer {
           return (double) 100 * (myCorners - enemyCorners) / (myCorners + enemyCorners);
         else
             return 0.0;
+    }
+
+    private double stabilityHeuristic(Move move, int[][] tab, OthelloGame game) {
+        int [][] board = simulateMove(tab, move.getBardPlace(), getMyBoardMark());
+        double myValue = 0.0;
+        double enemyValue = 0.0;
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+
+                if(board[i][j] == getMyBoardMark()) {
+                    myValue += calculateStability(board, i, j, getMyBoardMark());
+
+                } else if (board[i][j] == getOpponentBoardMark()) {
+                    enemyValue += calculateStability(board, i, j, getOpponentBoardMark());
+                }
+
+            }
+        }
+
+        if(myValue + enemyValue != 0)
+            return (double) 100 * (myValue - enemyValue) / (myValue * enemyValue);
+        else
+            return 0;
+    }
+
+    private double calculateStability(int[][] tab, int x, int y, int player) {
+        int playerCount = 0;
+        int otherCount = 0;
+        int emptyCount = 0;
+
+        if (isAtCorner(x, y, tab.length, tab[x].length)) //ta no canto
+            return 1.0;
+
+        for (int i = x - 1; i < x + 2; i++) {
+            for (int j = y - 1; j < y + 2; j++) {
+                if (i < 0 || i >= tab.length || j < 0 || j >= tab[x].length) //out of bounds
+                    continue;
+
+                if (i == x && j == y)
+                    continue;
+
+                else {
+                    if (tab[i][j] == 0)
+                        emptyCount++;
+
+                    else if(tab[i][j] == player)
+                        playerCount++;
+
+                    else
+                        otherCount++;
+
+                }
+            }
+        }
+
+        if (playerCount >= otherCount && playerCount >= emptyCount)
+            return 0.5;
+        else if(emptyCount >= playerCount && emptyCount >= otherCount)
+            return -1;
+        else
+            return -0.5;
+    }
+
+    private boolean isAtCorner(int x, int y, int width, int height) {
+        if (x == 0 || x == width) {
+            if (y == 0 || y == height)
+                return true;
+        }
+        return false;
     }
 
     private int countCorners(int [][] tab, int player) {
@@ -329,7 +402,6 @@ public class GreedyPlayer extends AbstractPlayer {
         /**
          * ******************************************************
          */
-        System.out.println(simulatedBoard);
         return simulatedBoard;
     }
 }

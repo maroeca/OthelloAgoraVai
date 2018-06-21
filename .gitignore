@@ -75,3 +75,7 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+.idea/misc.xml
+*.xml
+out/*
+.idea/*

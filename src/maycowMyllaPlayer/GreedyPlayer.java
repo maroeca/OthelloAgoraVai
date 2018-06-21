@@ -72,7 +72,7 @@ public class GreedyPlayer extends AbstractPlayer {
         int enemyMoves = game.getValidMoves(board, getOpponentBoardMark()).size();
 
         if (myMoves + enemyMoves != 0)
-            return (double) 100 * (myMoves - enemyMoves) / (myMoves * enemyMoves);
+            return (double) 100 * (myMoves - enemyMoves) / (myMoves + enemyMoves);
         else
             return 0.0;
     }
@@ -107,7 +107,7 @@ public class GreedyPlayer extends AbstractPlayer {
         }
 
         if(myValue + enemyValue != 0)
-            return (double) 100 * (myValue - enemyValue) / (myValue * enemyValue);
+            return (double) 100 * (myValue - enemyValue) / (myValue + enemyValue);
         else
             return 0;
     }

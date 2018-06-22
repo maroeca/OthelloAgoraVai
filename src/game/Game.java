@@ -50,12 +50,16 @@ public class Game {
                 player.setOpponentBoardMark(O);
                 player.setGame(game);
                 //Define player 2 class
-                /*if (displayOtello != null) {
+
+               /* if (displayOtello != null) {
                     player2 = new players.HumanPlayerDisplay(2);
                 } else {
                     player2 = new players.HumanPlayer(2);
                 }*/
                 player2 = new RandomPlayer(2);
+
+                //player2 = new maycowMyllaPlayer.GreedyPlayer();
+
                 player2.setBoardMark(O);
                 player2.setOpponentBoardMark(X);
                 player2.setGame(game);

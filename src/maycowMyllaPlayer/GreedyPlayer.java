@@ -193,7 +193,6 @@ public class GreedyPlayer extends AbstractPlayer {
         return (double) countPlayer;
     }
 
-    //igual a funçao do_move. Mas por algum motivo a do_move tava alterando direto a matriz game, deixando ela irreversivel
     private int[][] simulateMove(int[][] tab, BoardSquare boardPlace, int player) {
         int[][] simulatedBoard = new int[tab.length][tab[0].length];
 

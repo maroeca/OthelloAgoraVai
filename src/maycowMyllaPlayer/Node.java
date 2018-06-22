@@ -1,12 +1,17 @@
 package maycowMyllaPlayer;
 
+import game.Move;
+
 import java.util.ArrayList;
 
 public class Node {
     private int depth;
     private int [][] tab;
+    private Move move;
     private Node parent;
+    private int player;  //pro minimax
     private ArrayList<Node> children;
+    private double value;
 
     Node(int depth, int[][] tab, Node parent) {
         setDepth(depth);
@@ -35,8 +40,24 @@ public class Node {
         }
     }
 
+    public void setValue(double v) {
+        this.value = v;
+    }
+
+    private void setPlayer(int p) {
+        this.player = p;
+    }
+
     public void addChild(Node c) {
         this.children.add(c);
+    }
+
+    public void setMove(Move m) {
+        this.move = m;
+    }
+
+    public Move getMove() {
+        return this.move;
     }
 
     public Node getParent (){
@@ -51,4 +72,7 @@ public class Node {
         return this.tab;
     }
 
+    public double getValue() {
+        return value;
+    }
 }

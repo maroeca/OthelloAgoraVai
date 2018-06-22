@@ -27,20 +27,22 @@ public class GreedyPlayer extends AbstractPlayer {
 
 
     private Move greedySearch(List<Move> possibleMoves, int [][] tab, OthelloGame game) {
-        double heuristic = 0.0;
+        double heuristic;
         double bestHeuristic = Double.NEGATIVE_INFINITY;
         Move bestMove = possibleMoves.get(0);
 
         for (Move m: possibleMoves) {
-
+            heuristic = 0.0;
             heuristic += parityHeuristic(m, tab, game);
-            heuristic += mobilityHeuristic(m, tab, game);
+            heuristic += mobilityHeuristic(m, tab, game) * 1.5;
             heuristic += cornerHeuristic(m, tab, game);
-            heuristic += stabilityHeuristic(m, tab, game); // + outras heuristica
+            heuristic += stabilityHeuristic(m, tab, game) * 1; // + outras heuristica
 
-            System.out.println("PARITY: " + parityHeuristic(m, tab, game) + " || MOBILITY: " + mobilityHeuristic(m, tab, game) +
+
+
+            System.out.println("PARITY: " + parityHeuristic(m, tab, game)* 0.8f + " || MOBILITY: " + mobilityHeuristic(m, tab, game)* 1.3 +
                     " || CORNER: " + cornerHeuristic(m, tab, game) +
-                    " || STABILITY" + stabilityHeuristic(m, tab, game) + " || total: " + heuristic);
+                    " || STABILITY " + stabilityHeuristic(m, tab, game)* 0.3f + " || total: " + heuristic);
 
             if (bestHeuristic < heuristic) {
                 bestHeuristic = heuristic;
@@ -62,7 +64,11 @@ public class GreedyPlayer extends AbstractPlayer {
 
         //System.out.println("MY PLAYER: " + myPlayer + "- OP PLAYER: " + opPlayer);
         //System.out.println("PARIDADE " + 100 * ((myPlayer - opPlayer) / (myPlayer + opPlayer)));
-        return (double) 100 * ((myPlayer - opPlayer) / (myPlayer + opPlayer));
+        if (myPlayer > opPlayer)
+            return (double) 100 * ((myPlayer - opPlayer) / (myPlayer + opPlayer));
+        if (myPlayer < opPlayer)
+            return (double) -(100 * ((opPlayer - myPlayer) / (myPlayer + opPlayer)));
+        return 0.0;
     }
 
     private double mobilityHeuristic(Move move, int [][] tab, OthelloGame game) {
@@ -71,10 +77,14 @@ public class GreedyPlayer extends AbstractPlayer {
         int myMoves = game.getValidMoves(board, getMyBoardMark()).size();
         int enemyMoves = game.getValidMoves(board, getOpponentBoardMark()).size();
 
-        if (myMoves + enemyMoves != 0)
-            return (double) 100 * (myMoves - enemyMoves) / (myMoves + enemyMoves);
-        else
-            return 0.0;
+        if (myMoves + enemyMoves != 0) {
+            if (myMoves > enemyMoves)
+                return (double) 100 * (myMoves - enemyMoves) / (myMoves + enemyMoves);
+            else if (myMoves < enemyMoves) {
+                return (double) -(100 * (enemyMoves - myMoves) / (myMoves + enemyMoves));
+            }
+        }
+        return 0.0;
     }
 
     private double cornerHeuristic(Move move, int[][] tab, OthelloGame game) {
@@ -82,10 +92,14 @@ public class GreedyPlayer extends AbstractPlayer {
         int myCorners = countCorners(board, getMyBoardMark());
         int enemyCorners = countCorners(board, getOpponentBoardMark());
 
-        if(myCorners + enemyCorners != 0)
-          return (double) 100 * (myCorners - enemyCorners) / (myCorners + enemyCorners);
-        else
-            return 0.0;
+        if (myCorners + enemyCorners != 0) {
+            if (myCorners > enemyCorners)
+                return (double) 100 * (myCorners - enemyCorners) / (myCorners + enemyCorners);
+            else if (myCorners < enemyCorners) {
+                return (double) -(100 * (enemyCorners - myCorners) / (myCorners + enemyCorners));
+            }
+        }
+        return 0.0;
     }
 
     private double stabilityHeuristic(Move move, int[][] tab, OthelloGame game) {

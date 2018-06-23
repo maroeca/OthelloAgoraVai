@@ -1,11 +1,13 @@
 package maycowMyllaPlayer;
 
-import game.*;
+import game.AbstractPlayer;
+import game.BoardSquare;
+import game.Move;
+import game.OthelloGame;
 
 import java.util.List;
 
-public class GreedyPlayer extends AbstractPlayer {
-
+public class GreedyPlayer2 extends AbstractPlayer {
     @Override
     public BoardSquare play(int[][] tab) {
         OthelloGame game = new OthelloGame();
@@ -33,10 +35,10 @@ public class GreedyPlayer extends AbstractPlayer {
 
         for (Move m: possibleMoves) {
             heuristic = 0.0;
-            heuristic += parityHeuristic(m, tab, game) * 1.2;
+            heuristic += parityHeuristic(m, tab, game);
             heuristic += mobilityHeuristic(m, tab, game) * 1.5;
             heuristic += cornerHeuristic(m, tab, game);
-            heuristic += stabilityHeuristic(m, tab, game)  * .1; // + outras heuristica
+            heuristic += stabilityHeuristic(m, tab, game) * .2; // + outras heuristica
 
 
 
@@ -422,4 +424,3 @@ public class GreedyPlayer extends AbstractPlayer {
         return simulatedBoard;
     }
 }
-

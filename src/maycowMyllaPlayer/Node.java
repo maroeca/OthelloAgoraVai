@@ -17,9 +17,8 @@ public class Node {
         setDepth(depth);
         setParent(parent);
         setTab(tab);
-
-        children = new ArrayList<Node>();
         value = 0.0;
+        children = new ArrayList<Node>();
     }
 
     private void setDepth(int d) {
@@ -27,6 +26,7 @@ public class Node {
     }
 
     private void setParent(Node p) {
+
         this.parent = p;
     }
 
@@ -47,7 +47,9 @@ public class Node {
     }
 
     public void setValue(double v) {
+        //System.out.println("Value on node before: " + v);
         this.value = v;
+        //System.out.println("Value on node after: " + this.value);
     }
 
     public void setPlayer(int p) {
@@ -55,6 +57,7 @@ public class Node {
     }
 
     public void addChild(Node c) {
+
         this.children.add(c);
     }
 
@@ -79,7 +82,8 @@ public class Node {
     }
 
     public double getValue() {
-        return value;
+        //System.out.println("Value on getValue: " + this.value);
+        return this.value;
     }
 
     public boolean hasChildren() {

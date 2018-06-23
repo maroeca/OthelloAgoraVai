@@ -27,9 +27,11 @@ public class Graph {
     }
 
     public void addNode(Node newNode, Node parent, Move move) {
+        //System.out.println("Value on node AddNode: " + newNode.getValue());
         newNode.setMove(move);
         parent.addChild(newNode);
         this.nodes.add(newNode);
+        //System.out.println("Value on node AddNode: " + newNode.getValue());
     }
 
     public Node getStartNode() {
@@ -57,8 +59,11 @@ public class Graph {
                 newNode.setPlayer(player);
                 simulateStates(board, newNode, player * (-1), depth + 1, maxDepth);  //recursividade. Vai repetir ate que depth seja >= maxDepth
 
-                if(depth == maxDepth)
+                if(depth == maxDepth) {
                     newNode.setValue(calculateHeuristics(m, board, player, game));
+                    //System.out.println("Value on node Graph: " + newNode.getValue());
+                    //System.out.println(calculateHeuristics(m, board, player, game));
+                }
 
 
                 this.addNode(newNode, parentNode, m); //adiciona o node no array
@@ -128,7 +133,7 @@ public class Graph {
         heuristic += parityHeuristic(m, tab, player, game);
         heuristic += mobilityHeuristic(m, tab, player, game);
         heuristic += cornerHeuristic(m, tab, player, game);
-        heuristic += stabilityHeuristic(m, tab, player, game);
+        //heuristic += stabilityHeuristic(m, tab, player, game);
 
         return heuristic;
     }

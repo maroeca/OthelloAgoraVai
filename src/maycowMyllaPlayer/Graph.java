@@ -46,8 +46,11 @@ public class Graph {
     }
 
     private void simulateStates(int[][] tab, Node parentNode, int player, int depth, int maxDepth) {
-        if (depth > maxDepth)
+        //System.out.println("Depth on start of simulateStates: " + depth + " Player: " + player);
+        if (depth > maxDepth) {
+            System.out.println("Retornou");
             return;
+        }
 
         OthelloGame game = new OthelloGame();
         List<Move> validMoves = game.getValidMoves(tab, player);
@@ -55,21 +58,25 @@ public class Graph {
         for (Move m : validMoves) {
             int[][] board = simulateMove(tab, m.getBardPlace(), player);  //cria um novo board com o movimento M simulado
 
-            if (!game.noSpace(board)) { //verifica se o jogo acabou
+            if (!game.noSpace(board)) { //verifica se o jogo nao acabou
 
                 Node newNode = new Node(depth, board, parentNode); //cria um novo node
                 newNode.setPlayer(player);
                 simulateStates(board, newNode, player * (-1), depth + 1, maxDepth);  //recursividade. Vai repetir ate que depth seja >= maxDepth
 
                 if(depth == maxDepth) {
+                    //TODO: setar o valor dos pais para o mesmo valor do newNode
                     newNode.setValue(calculateHeuristics(m, board, player, game));
-                    //System.out.println("Value on node IF: " + newNode.getValue());
-                    //System.out.println(calculateHeuristics(m, board, player, game));
+                    parentNode.setValue(newNode.getValue());
+                    parentNode.getParent().setValue(newNode.getValue());
+
                 }
-                //System.out.println("Depth: "+ depth + " MaxDepth: " + maxDepth);
+
                 //System.out.println("Value on node addNode: " + newNode.getValue());
 
                 this.addNode(newNode, parentNode, m); //adiciona o node no array
+                System.out.println("Value on node addNode: " + newNode.getValue());
+
 
             } else {
                 if (isMyPlayerWinner(player, board)) {

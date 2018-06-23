@@ -12,7 +12,8 @@ public class BFSPlayer extends AbstractPlayer {
     public BoardSquare play(int[][] tab) {
         OthelloGame game = new OthelloGame();
 
-        Move bestMove = breadthFirstSearch(tab, 1);
+
+        Move bestMove = breadthFirstSearch(tab, 2);
 
         return bestMove.getBardPlace();
     }
@@ -27,6 +28,7 @@ public class BFSPlayer extends AbstractPlayer {
 
     private Node miniMax(Node node, int depth, int maxDepth) {
         if (depth > maxDepth || !node.hasChildren()) {
+
             //System.out.println("node: " + node.getValue());
             return node;
         }
@@ -52,7 +54,6 @@ public class BFSPlayer extends AbstractPlayer {
                 return bestNode;
             }
             //System.out.println("n: " + n.getChildren().get(0).getValue());
-
         }
     }
 

@@ -11,9 +11,8 @@ import java.util.List;
 public class BFSPlayer extends AbstractPlayer {
     public BoardSquare play(int[][] tab) {
         OthelloGame game = new OthelloGame();
-        List<Move> firstMoves = game.getValidMoves(tab, getMyBoardMark());
 
-        Move bestMove = breadthFirstSearch(tab, 2);
+        Move bestMove = breadthFirstSearch(tab, 5);
         return bestMove.getBardPlace();
     }
 

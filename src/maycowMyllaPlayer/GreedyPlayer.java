@@ -40,9 +40,9 @@ public class GreedyPlayer extends AbstractPlayer {
 
 
 
-            System.out.println("PARITY: " + parityHeuristic(m, tab, game)* 0.8f + " || MOBILITY: " + mobilityHeuristic(m, tab, game)* 1.3 +
+            /*System.out.println("PARITY: " + parityHeuristic(m, tab, game)* 0.8f + " || MOBILITY: " + mobilityHeuristic(m, tab, game)* 1.3 +
                     " || CORNER: " + cornerHeuristic(m, tab, game) +
-                    " || STABILITY " + stabilityHeuristic(m, tab, game)* 0.3f + " || total: " + heuristic);
+                    " || STABILITY " + stabilityHeuristic(m, tab, game)* 0.3f + " || total: " + heuristic);*/
 
             if (bestHeuristic < heuristic) {
                 bestHeuristic = heuristic;

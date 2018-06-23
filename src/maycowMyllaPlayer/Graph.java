@@ -22,7 +22,7 @@ public class Graph {
     }
 
     private void setStartNode(int[][] tab) {
-        startNode = new Node(0, tab, null);
+        startNode = new Node(-1, tab, null);
         nodes.add(startNode);
     }
 
@@ -38,7 +38,7 @@ public class Graph {
 
     public void setupGraph(int[][] tab, int player, int maxDepth) {
         setStartNode(tab);
-        simulateStates(tab, startNode, player, 1, maxDepth);
+        simulateStates(tab, startNode, player, 0, maxDepth);
     }
 
     private void simulateStates(int[][] tab, Node parentNode, int player, int depth, int maxDepth) {
@@ -54,12 +54,13 @@ public class Graph {
             if (!game.noSpace(board)) { //verifica se o jogo acabou
 
                 Node newNode = new Node(depth, board, parentNode); //cria um novo node
+                newNode.setPlayer(player);
                 simulateStates(board, newNode, player * (-1), depth + 1, maxDepth);  //recursividade. Vai repetir ate que depth seja >= maxDepth
 
                 if(depth == maxDepth)
                     newNode.setValue(calculateHeuristics(m, board, player, game));
 
-                newNode.setPlayer(player);
+
                 this.addNode(newNode, parentNode, m); //adiciona o node no array
 
             } else {

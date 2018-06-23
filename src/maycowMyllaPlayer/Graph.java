@@ -19,6 +19,7 @@ public class Graph {
     public void reset() {
         startNode = null;
         nodes.clear();
+
     }
 
     private void setStartNode(int[][] tab) {
@@ -41,6 +42,7 @@ public class Graph {
     public void setupGraph(int[][] tab, int player, int maxDepth) {
         setStartNode(tab);
         simulateStates(tab, startNode, player, 0, maxDepth);
+        System.out.println("Setup");
     }
 
     private void simulateStates(int[][] tab, Node parentNode, int player, int depth, int maxDepth) {
@@ -61,10 +63,11 @@ public class Graph {
 
                 if(depth == maxDepth) {
                     newNode.setValue(calculateHeuristics(m, board, player, game));
-                    //System.out.println("Value on node Graph: " + newNode.getValue());
+                    //System.out.println("Value on node IF: " + newNode.getValue());
                     //System.out.println(calculateHeuristics(m, board, player, game));
                 }
-
+                System.out.println("Depth: "+ depth + " MaxDepth: " + maxDepth);
+                //System.out.println("Value on node addNode: " + newNode.getValue());
 
                 this.addNode(newNode, parentNode, m); //adiciona o node no array
 

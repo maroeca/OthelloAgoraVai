@@ -1,66 +1,145 @@
 package maycowMyllaPlayer;
 
-import game.*;
+import game.BoardSquare;
+import game.Move;
+import game.OthelloGame;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class GreedyPlayer extends AbstractPlayer {
+public class Graph {
+    private Node startNode;
+    private ArrayList<Node> nodes;
 
-    @Override
-    public BoardSquare play(int[][] tab) {
+    Graph() {
+        nodes = new ArrayList<Node>();
+        reset();
+    }
+
+    public void reset() {
+        startNode = null;
+        nodes.clear();
+    }
+
+    private void setStartNode(int[][] tab) {
+        startNode = new Node(-1, tab, null);
+        nodes.add(startNode);
+    }
+
+    public void addNode(Node newNode, Node parent, Move move) {
+        newNode.setMove(move);
+        parent.addChild(newNode);
+        this.nodes.add(newNode);
+    }
+
+    public Node getStartNode() {
+        return this.startNode;
+    }
+
+    public void setupGraph(int[][] tab, int player, int maxDepth) {
+        setStartNode(tab);
+        simulateStates(tab, startNode, player, 0, maxDepth);
+    }
+
+    private void simulateStates(int[][] tab, Node parentNode, int player, int depth, int maxDepth) {
+        if (depth > maxDepth)
+            return;
+
         OthelloGame game = new OthelloGame();
-        List<Move> moves = game.getValidMoves(tab, getMyBoardMark());
+        List<Move> validMoves = game.getValidMoves(tab, player);
 
-        Move bestGreedyMove = greedySearch(moves, tab, game);
-        return bestGreedyMove.getBardPlace();
+        for (Move m : validMoves) {
+            int[][] board = simulateMove(tab, m.getBardPlace(), player);  //cria um novo board com o movimento M simulado
+
+            if (!game.noSpace(board)) { //verifica se o jogo acabou
+
+                Node newNode = new Node(depth, board, parentNode); //cria um novo node
+                newNode.setPlayer(player);
+                simulateStates(board, newNode, player * (-1), depth + 1, maxDepth);  //recursividade. Vai repetir ate que depth seja >= maxDepth
+
+                if(depth == maxDepth)
+                    newNode.setValue(calculateHeuristics(m, board, player, game));
+
+
+                this.addNode(newNode, parentNode, m); //adiciona o node no array
+
+            } else {
+                if (isMyPlayerWinner(player, board)) {
+                    Node newNode =  new Node(depth, board, parentNode);
+                    newNode.setValue(Double.POSITIVE_INFINITY);
+                    newNode.setPlayer(player);
+                    this.addNode(newNode, parentNode, m);
+
+                } else {
+                    Node newNode = new Node(depth, board, parentNode);
+                    newNode.setValue(Double.NEGATIVE_INFINITY);
+                    newNode.setPlayer(player);
+                    this.addNode(newNode, parentNode, m);
+                }
+            }
+        }
+
     }
 
     /**
-     * Todas as heuristicas serão calculadas aqui
-     *   HEUTISTICAS:
-     *   Fonte: https://kartikkukreja.wordpress.com/2013/03/30/heuristic-function-for-reversiothello/
-     *   1. Paridade da quantidade de peças dos players.
-     *   2. Diferença relativa dos movimentos possiveis de cada player. Assim o player tenta reduzir a mobilidade do inimigo
-     *   3. Quantidade de bordas capturadas
-     *   4. Estabilidade das pecas de cada player
-     **/
+     * Funcoes relacionadas ao grafo ou criaçao dele
+     */
 
-
-    private Move greedySearch(List<Move> possibleMoves, int [][] tab, OthelloGame game) {
-        double heuristic;
-        double bestHeuristic = Double.NEGATIVE_INFINITY;
-        Move bestMove = possibleMoves.get(0);
-
-        for (Move m: possibleMoves) {
-            heuristic = 0.0;
-            heuristic += parityHeuristic(m, tab, game) * 1.2;
-            heuristic += mobilityHeuristic(m, tab, game) * 1.5;
-            heuristic += cornerHeuristic(m, tab, game);
-            heuristic += stabilityHeuristic(m, tab, game)  * .1; // + outras heuristica
-
-
-
-            /*System.out.println("PARITY: " + parityHeuristic(m, tab, game)* 0.8f + " || MOBILITY: " + mobilityHeuristic(m, tab, game)* 1.3 +
-                    " || CORNER: " + cornerHeuristic(m, tab, game) +
-                    " || STABILITY " + stabilityHeuristic(m, tab, game)* 0.3f + " || total: " + heuristic);*/
-
-            if (bestHeuristic < heuristic) {
-                bestHeuristic = heuristic;
-                bestMove = m;
-
-            }
+    public ArrayList<Node> getNodesFromDepth(int depth) {
+        ArrayList<Node> aux = new ArrayList<Node>();
+        for(Node n : this.nodes) {
+            if (n.getDepth() == depth)
+                aux.add(n);
         }
-        System.out.println();
-        return bestMove;
+
+        return aux;
     }
 
-    private double parityHeuristic(Move move, int [][] tab, OthelloGame game) {
+    public boolean isMyPlayerWinner(int player, int[][] tab) {
+        int myPlayer = 0;
+        int opPlayer = 0;
+
+        for (int i = 0; i < tab.length; i++) {
+            for (int j = 0; j < tab[i].length; j++) {
+                if (tab[i][j] == player)
+                    myPlayer++;
+                else if (tab[i][j] == (player * -1))
+                    opPlayer++;
+                else
+                    System.err.println("UER deu ruim na contagem no isMyPlayerWinner");
+            }
+        }
+
+        if (myPlayer > opPlayer)
+            return true;
+
+        return false;
+    }
+
+
+    /**
+     * Heuristicas e funçoes auxiliares relacionadas.
+     * Descriçoes das heuristicas no GreedyPlayer
+     */
+
+    private double calculateHeuristics(Move m, int[][] tab, int player, OthelloGame game) {
+        double heuristic = 0.0;
+
+        heuristic += parityHeuristic(m, tab, player, game);
+        heuristic += mobilityHeuristic(m, tab, player, game);
+        heuristic += cornerHeuristic(m, tab, player, game);
+        heuristic += stabilityHeuristic(m, tab, player, game);
+
+        return heuristic;
+    }
+
+    private double parityHeuristic(Move move, int [][] tab, int player, OthelloGame game) {
         //System.out.println(tab);
-        int [][] board = simulateMove(tab, move.getBardPlace(), getMyBoardMark());
+        int [][] board = simulateMove(tab, move.getBardPlace(), player);
         //System.out.println(board);
 
-        double myPlayer = countPlayerMarks(board, getMyBoardMark());
-        double opPlayer = countPlayerMarks(board, getOpponentBoardMark());
+        double myPlayer = countPlayerMarks(board, player);
+        double opPlayer = countPlayerMarks(board, (player * -1));
 
         //System.out.println("MY PLAYER: " + myPlayer + "- OP PLAYER: " + opPlayer);
         //System.out.println("PARIDADE " + 100 * ((myPlayer - opPlayer) / (myPlayer + opPlayer)));
@@ -71,11 +150,11 @@ public class GreedyPlayer extends AbstractPlayer {
         return 0.0;
     }
 
-    private double mobilityHeuristic(Move move, int [][] tab, OthelloGame game) {
-        int [][] board = simulateMove(tab, move.getBardPlace(), getMyBoardMark());
+    private double mobilityHeuristic(Move move, int [][] tab, int player, OthelloGame game) {
+        int [][] board = simulateMove(tab, move.getBardPlace(), player);
 
-        int myMoves = game.getValidMoves(board, getMyBoardMark()).size();
-        int enemyMoves = game.getValidMoves(board, getOpponentBoardMark()).size();
+        int myMoves = game.getValidMoves(board, player).size();
+        int enemyMoves = game.getValidMoves(board, (player * -1)).size();
 
         if (myMoves + enemyMoves != 0) {
             if (myMoves > enemyMoves)
@@ -87,10 +166,10 @@ public class GreedyPlayer extends AbstractPlayer {
         return 0.0;
     }
 
-    private double cornerHeuristic(Move move, int[][] tab, OthelloGame game) {
-        int [][] board = simulateMove(tab, move.getBardPlace(), getMyBoardMark());
-        int myCorners = countCorners(board, getMyBoardMark());
-        int enemyCorners = countCorners(board, getOpponentBoardMark());
+    private double cornerHeuristic(Move move, int[][] tab, int player,  OthelloGame game) {
+        int [][] board = simulateMove(tab, move.getBardPlace(), player);
+        int myCorners = countCorners(board, player);
+        int enemyCorners = countCorners(board, (player * -1));
 
         if (myCorners + enemyCorners != 0) {
             if (myCorners > enemyCorners)
@@ -102,19 +181,19 @@ public class GreedyPlayer extends AbstractPlayer {
         return 0.0;
     }
 
-    private double stabilityHeuristic(Move move, int[][] tab, OthelloGame game) {
-        int [][] board = simulateMove(tab, move.getBardPlace(), getMyBoardMark());
+    private double stabilityHeuristic(Move move, int[][] tab, int player, OthelloGame game) {
+        int [][] board = simulateMove(tab, move.getBardPlace(), player);
         double myValue = 0.0;
         double enemyValue = 0.0;
 
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
 
-                if(board[i][j] == getMyBoardMark()) {
-                    myValue += calculateStability(board, i, j, getMyBoardMark());
+                if(board[i][j] == player) {
+                    myValue += calculateStability(board, i, j, player);
 
-                } else if (board[i][j] == getOpponentBoardMark()) {
-                    enemyValue += calculateStability(board, i, j, getOpponentBoardMark());
+                } else if (board[i][j] == (player * -1)) {
+                    enemyValue += calculateStability(board, i, j, (player * -1));
                 }
 
             }
@@ -420,5 +499,5 @@ public class GreedyPlayer extends AbstractPlayer {
          */
         return simulatedBoard;
     }
-}
 
+}

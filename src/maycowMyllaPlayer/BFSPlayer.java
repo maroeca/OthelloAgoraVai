@@ -12,7 +12,7 @@ public class BFSPlayer extends AbstractPlayer {
     public BoardSquare play(int[][] tab) {
         OthelloGame game = new OthelloGame();
 
-        Move bestMove = breadthFirstSearch(tab, 5);
+        Move bestMove = breadthFirstSearch(tab, 1);
 
         return bestMove.getBardPlace();
     }
@@ -21,34 +21,46 @@ public class BFSPlayer extends AbstractPlayer {
         Graph graph = new Graph();
         graph.setupGraph(tab, getMyBoardMark(), maxDepth);
 
-
-        Node node = miniMax(graph.getStartNode(), 0, maxDepth);
-        return node.getMove();
+        Node node = miniMax(graph.getStartNode(), -1, maxDepth);
+        return getFirstMoveOfNode(node).getMove();
     }
 
     private Node miniMax(Node node, int depth, int maxDepth) {
-        Node n = node;
-        //System.out.println("MiniMax: " + n.getValue());
-        if (depth == maxDepth || !node.hasChildren()) {
+        if (depth > maxDepth || !node.hasChildren()) {
             //System.out.println("node: " + node.getValue());
             return node;
         }
         else {
-            if (node.getPlayer() == getMyBoardMark()) {
+            if (node.getPlayer() == getMyBoardMark()) { //MAX
+                Node bestNode = node;
                 for(Node child : node.getChildren()) {
 
-                    n = max(child, miniMax(child, depth + 1, maxDepth));
-                }
+                    Node n = miniMax(child, depth + 1, maxDepth);
+                    bestNode = max(bestNode, n);
 
-            } else {
+                }
+                return bestNode;
+
+            } else { //MIN
+                Node bestNode = node;
                 for(Node child : node.getChildren()) {
                     //System.out.println(child.getValue());
-                    n = min(child, miniMax(child, depth + 1, maxDepth));
+                    Node n = miniMax(child, depth + 1, maxDepth);
+                    bestNode = min(bestNode, n);
+
                 }
+                return bestNode;
             }
             //System.out.println("n: " + n.getChildren().get(0).getValue());
-            return n;
+
         }
+    }
+
+    private Node getFirstMoveOfNode(Node node) {
+        if (node.getDepth() <= 0)
+            return node;
+
+        return getFirstMoveOfNode(node.getParent());
     }
 
     private Node max(Node nodeA, Node nodeB) {
@@ -60,7 +72,7 @@ public class BFSPlayer extends AbstractPlayer {
     }
 
     private Node min(Node nodeA, Node nodeB) {
-        if (nodeA.getValue() <= nodeB.getValue())
+        if (nodeA.getValue() < nodeB.getValue())
             return nodeA;
 
         return nodeB;

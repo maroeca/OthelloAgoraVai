@@ -1,6 +1,7 @@
 package game;
 
 import display.Display;
+import maycowMyllaPlayer.BFSPlayer;
 import players.HumanPlayer;
 import players.RandomPlayer;
 
@@ -56,8 +57,8 @@ public class Game {
                 } else {
                     player2 = new players.HumanPlayer(2);
                 }*/
-                player2 = new RandomPlayer(2);
-
+                //player2 = new RandomPlayer(2);
+                player2 = new BFSPlayer();
                 //player2 = new maycowMyllaPlayer.GreedyPlayer();
 
                 player2.setBoardMark(O);

@@ -19,6 +19,7 @@ public class Node {
         setTab(tab);
 
         children = new ArrayList<Node>();
+        value = 0.0;
     }
 
     private void setDepth(int d) {
@@ -28,6 +29,7 @@ public class Node {
     private void setParent(Node p) {
         this.parent = p;
     }
+
 
     private void setTab(int[][] t) {
         int size = t.length;
@@ -40,11 +42,15 @@ public class Node {
         }
     }
 
+    public int getPlayer() {
+        return this.player;
+    }
+
     public void setValue(double v) {
         this.value = v;
     }
 
-    private void setPlayer(int p) {
+    public void setPlayer(int p) {
         this.player = p;
     }
 
@@ -75,4 +81,16 @@ public class Node {
     public double getValue() {
         return value;
     }
+
+    public boolean hasChildren() {
+        if(children.size() > 0)
+            return true;
+
+        return false;
+    }
+
+    public ArrayList<Node> getChildren() {
+        return children;
+    }
 }
+

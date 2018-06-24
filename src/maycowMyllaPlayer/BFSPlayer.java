@@ -22,14 +22,13 @@ public class BFSPlayer extends AbstractPlayer {
         Graph graph = new Graph();
         graph.setupGraph(tab, getMyBoardMark(), maxDepth);
 
-        Node node = miniMax(graph.getStartNode(), -1, maxDepth);
+        Node node = miniMax(graph.getStartNode(), 0, maxDepth);
+        System.out.println("Node escolhido" + getFirstMoveOfNode(node).getValue());
         return getFirstMoveOfNode(node).getMove();
     }
 
     private Node miniMax(Node node, int depth, int maxDepth) {
         if (depth > maxDepth || !node.hasChildren()) {
-
-            //System.out.println("node: " + node.getValue());
             return node;
         }
         else {
@@ -65,7 +64,6 @@ public class BFSPlayer extends AbstractPlayer {
     }
 
     private Node max(Node nodeA, Node nodeB) {
-
         if (nodeA.getValue() > nodeB.getValue())
             return nodeA;
 

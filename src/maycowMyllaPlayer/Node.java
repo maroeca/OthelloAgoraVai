@@ -49,7 +49,17 @@ public class Node {
     public void setValue(double v) {
         //System.out.println("Value on node before: " + v);
         this.value = v;
-        //System.out.println("Value on node after: " + this.value);
+        //tentei setar o valor do pai por aqui e da invalid move tbm
+        //this.parent.setParentValue(v);
+    }
+
+    //Tentei setar o valor do pai mas da invalid move
+    public void setParentValue(double v){
+        try {
+            this.parent.value = v;
+        }catch (Exception e){
+            System.err.println(e + "PARENT NULL");
+        }
     }
 
     public void setPlayer(int p) {

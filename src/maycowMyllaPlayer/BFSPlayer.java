@@ -23,7 +23,7 @@ public class BFSPlayer extends AbstractPlayer {
         graph.setupGraph(tab, getMyBoardMark(), maxDepth);
 
         Node node = miniMax(graph.getStartNode(), 0, maxDepth);
-        System.out.println("Node escolhido" + getFirstMoveOfNode(node).getValue());
+        //System.out.println("Node escolhido" + getFirstMoveOfNode(node).getValue());
         return getFirstMoveOfNode(node).getMove();
     }
 
@@ -31,23 +31,22 @@ public class BFSPlayer extends AbstractPlayer {
         if (depth > maxDepth || !node.hasChildren()) {
             return node;
         }
+
         else {
-            if (node.getPlayer() == getMyBoardMark()) { //MAX
-                Node bestNode = node;
+            if (node.getPlayer() == getMyBoardMark()) {
+                Node bestNode = node.getChildren().get(0);
+
                 for(Node child : node.getChildren()) {
-
                     Node n = miniMax(child, depth + 1, maxDepth);
-                    bestNode = max(bestNode, n);
-
+                    bestNode = min(bestNode, n);
                 }
                 return bestNode;
 
-            } else { //MIN
-                Node bestNode = node;
+            } else {
+                Node bestNode = node.getChildren().get(0);
                 for(Node child : node.getChildren()) {
-                    //System.out.println(child.getValue());
                     Node n = miniMax(child, depth + 1, maxDepth);
-                    bestNode = min(bestNode, n);
+                    bestNode = max(bestNode, n);
 
                 }
                 return bestNode;
@@ -71,6 +70,7 @@ public class BFSPlayer extends AbstractPlayer {
     }
 
     private Node min(Node nodeA, Node nodeB) {
+        System.out.println("NodeA: " + nodeA.getValue() + " NodeB: " + nodeB.getValue());
         if (nodeA.getValue() < nodeB.getValue())
             return nodeA;
 

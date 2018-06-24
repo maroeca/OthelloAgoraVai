@@ -23,7 +23,7 @@ public class BFSPlayer extends AbstractPlayer {
         graph.setupGraph(tab, getMyBoardMark(), maxDepth);
 
         Node node = miniMax(graph.getStartNode(), 0, maxDepth);
-        //System.out.println("Node escolhido" + getFirstMoveOfNode(node).getValue());
+        System.out.println("BESTNODE: " + node.getValue());
         return getFirstMoveOfNode(node).getMove();
     }
 
@@ -34,7 +34,7 @@ public class BFSPlayer extends AbstractPlayer {
 
         else {
             if (node.getPlayer() == getMyBoardMark()) {
-                Node bestNode = node.getChildren().get(0);
+                Node bestNode = getTerminalNode(node);
 
                 for(Node child : node.getChildren()) {
                     Node n = miniMax(child, depth + 1, maxDepth);
@@ -43,7 +43,7 @@ public class BFSPlayer extends AbstractPlayer {
                 return bestNode;
 
             } else {
-                Node bestNode = node.getChildren().get(0);
+                Node bestNode = getTerminalNode(node);
                 for(Node child : node.getChildren()) {
                     Node n = miniMax(child, depth + 1, maxDepth);
                     bestNode = max(bestNode, n);
@@ -62,18 +62,29 @@ public class BFSPlayer extends AbstractPlayer {
         return getFirstMoveOfNode(node.getParent());
     }
 
-    private Node max(Node nodeA, Node nodeB) {
-        if (nodeA.getValue() > nodeB.getValue())
-            return nodeA;
+    private Node getTerminalNode(Node node) {
+        if (!node.hasChildren())
+            return node;
 
+        return getTerminalNode(node.getChildren().get(0));
+    }
+
+    private Node max(Node nodeA, Node nodeB) {
+        if (nodeA.getValue() > nodeB.getValue()) {
+            System.out.println("MAX: " + nodeA.getValue());
+            return nodeA;
+        }
+        System.out.println("MAX: " + nodeB.getValue());
         return nodeB;
     }
 
     private Node min(Node nodeA, Node nodeB) {
-        System.out.println("NodeA: " + nodeA.getValue() + " NodeB: " + nodeB.getValue());
-        if (nodeA.getValue() < nodeB.getValue())
+        if (nodeA.getValue() < nodeB.getValue()) {
+            System.out.println("MIN: " + nodeA.getValue());
             return nodeA;
+        }
 
+        System.out.println("MIN: " + nodeB.getValue());
         return nodeB;
     }
 

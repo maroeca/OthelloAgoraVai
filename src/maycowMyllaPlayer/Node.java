@@ -30,7 +30,6 @@ public class Node {
         this.parent = p;
     }
 
-
     private void setTab(int[][] t) {
         int size = t.length;
         this.tab = new int[size][size];

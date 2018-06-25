@@ -36,9 +36,9 @@ public class GreedyPlayer2 extends AbstractPlayer {
         for (Move m: possibleMoves) {
             heuristic = 0.0;
             heuristic += parityHeuristic(m, tab, game);
-            heuristic += mobilityHeuristic(m, tab, game) * 1.5;
+            heuristic += mobilityHeuristic(m, tab, game);
             heuristic += cornerHeuristic(m, tab, game);
-            heuristic += stabilityHeuristic(m, tab, game) * .2; // + outras heuristica
+            heuristic += stabilityHeuristic(m, tab, game); // + outras heuristica
 
 
 

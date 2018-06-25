@@ -10,10 +10,21 @@ import java.util.List;
 public class Graph {
     private Node startNode;
     private ArrayList<Node> nodes;
+    private float h1, h2, h3, h4;
 
     Graph() {
         nodes = new ArrayList<Node>();
         reset();
+        h1 = h2 = h3 = h4 = 1f;
+    }
+
+    Graph(float heuristica1, float heuristica2, float heuristica3, float heuristica4){
+        nodes = new ArrayList<Node>();
+        reset();
+        h1 = heuristica1;
+        h2 = heuristica2;
+        h3 = heuristica3;
+        h4 = heuristica4;
     }
 
     public void reset() {
@@ -32,6 +43,7 @@ public class Graph {
         //System.out.println("Value on node AddNode: " + newNode.getValue());
         newNode.setMove(move);
         parent.addChild(newNode);
+        //parent.setValue(newNode.getValue());
         this.nodes.add(newNode);
         //System.out.println("Value on node AddNode: " + newNode.getValue());
     }
@@ -138,10 +150,10 @@ public class Graph {
     private double calculateHeuristics(Move m, int[][] tab, int player, OthelloGame game) {
         double heuristic = 0.0;
 
-        heuristic += parityHeuristic(m, tab, player, game);
-        heuristic += mobilityHeuristic(m, tab, player, game);
-        heuristic += cornerHeuristic(m, tab, player, game);
-        heuristic += stabilityHeuristic(m, tab, player, game);
+        heuristic += parityHeuristic(m, tab, player, game) * h1;
+        heuristic += mobilityHeuristic(m, tab, player, game) * h2;
+        heuristic += cornerHeuristic(m, tab, player, game) * h3;
+        heuristic += stabilityHeuristic(m, tab, player, game) * h4;
 
         return heuristic;
     }

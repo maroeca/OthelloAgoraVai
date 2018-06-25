@@ -8,22 +8,22 @@ import game.OthelloGame;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BFSPlayer extends AbstractPlayer {
+public class BFSPlayer2 extends AbstractPlayer {
     public BoardSquare play(int[][] tab) {
         OthelloGame game = new OthelloGame();
 
 
-        Move bestMove = breadthFirstSearch(tab, 3);
+        Move bestMove = breadthFirstSearch(tab, 4);
 
         return bestMove.getBardPlace();
     }
 
     private Move breadthFirstSearch(int[][] tab, int maxDepth) {
-        Graph graph = new Graph();
+        Graph graph = new Graph(1.5f, 1.5f, 1.2f, 1f);
         graph.setupGraph(tab, getMyBoardMark(), maxDepth);
 
         Node node = miniMax(graph.getStartNode(), 0, maxDepth);
-        System.out.println("BESTNODE: " + node.getValue());
+        //System.out.println("BESTNODE: " + node.getValue());
         return getFirstMoveOfNode(node).getMove();
     }
 
@@ -71,20 +71,20 @@ public class BFSPlayer extends AbstractPlayer {
 
     private Node max(Node nodeA, Node nodeB) {
         if (nodeA.getValue() > nodeB.getValue()) {
-            System.out.println("MAX: " + nodeA.getValue());
+            //System.out.println("MAX: " + nodeA.getValue());
             return nodeA;
         }
-        System.out.println("MAX: " + nodeB.getValue());
+        //System.out.println("MAX: " + nodeB.getValue());
         return nodeB;
     }
 
     private Node min(Node nodeA, Node nodeB) {
         if (nodeA.getValue() < nodeB.getValue()) {
-            System.out.println("MIN: " + nodeA.getValue());
+            //System.out.println("MIN: " + nodeA.getValue());
             return nodeA;
         }
 
-        System.out.println("MIN: " + nodeB.getValue());
+        //System.out.println("MIN: " + nodeB.getValue());
         return nodeB;
     }
 

@@ -46,7 +46,7 @@ public class Game {
                     player = new players.HumanPlayer(2);
                 }*/
                 //player = new players.RandomPlayer(2);
-                player = new maycowMyllaPlayer.BFSPlayer();
+                player = new maycowMyllaPlayer.GreedyPlayer();
                 player.setBoardMark(X);
                 player.setOpponentBoardMark(O);
                 player.setGame(game);
@@ -58,7 +58,7 @@ public class Game {
                     player2 = new players.HumanPlayer(2);
                 }*/
                 //player2 = new RandomPlayer(2);
-                player2 = new maycowMyllaPlayer.GreedyPlayer();
+                player2 = new maycowMyllaPlayer.BFSPlayer2();
                 //player2 = new maycowMyllaPlayer.GreedyPlayer();
 
                 player2.setBoardMark(O);

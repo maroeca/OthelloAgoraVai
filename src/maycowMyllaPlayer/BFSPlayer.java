@@ -71,20 +71,20 @@ public class BFSPlayer extends AbstractPlayer {
 
     private Node max(Node nodeA, Node nodeB) {
         if (nodeA.getValue() > nodeB.getValue()) {
-            System.out.println("MAX: " + nodeA.getValue());
+            System.out.println("NODEA: " + nodeA.getValue() + "|| NODEB: " + nodeB.getValue() + "|| MAX: " + nodeA.getValue());
             return nodeA;
         }
-        System.out.println("MAX: " + nodeB.getValue());
+        System.out.println("NODEA: " + nodeA.getValue() + "|| NODEB: " + nodeB.getValue() + "|| MAX: " + nodeB.getValue());
         return nodeB;
     }
 
     private Node min(Node nodeA, Node nodeB) {
         if (nodeA.getValue() < nodeB.getValue()) {
-            System.out.println("MIN: " + nodeA.getValue());
+            System.out.println("NODEA: " + nodeA.getValue() + "|| NODEB: " + nodeB.getValue() + "|| MIN: " + nodeA.getValue());
             return nodeA;
         }
 
-        System.out.println("MIN: " + nodeB.getValue());
+        System.out.println("NODEA: " + nodeA.getValue() + "|| NODEB: " + nodeB.getValue() + "|| MIN: " + nodeB.getValue());
         return nodeB;
     }
 
